@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zamjena posteljine</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      display: block;
+      width: 100%;
+    }
+    #rezultat {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Provjera posteljine</h2>
+  <label for="datumDolaska">Unesi datum dolaska gosta:</label>
+  <input type="date" id="datumDolaska">
+  <button onclick="provjeriPosteljinu()">Provjeri</button>
+  <div id="rezultat"></div>
+
+  <script>
+    function formatirajDatum(datum) {
+      const dan = datum.getDate().toString().padStart(2, '0');
+      const mjesec = (datum.getMonth() + 1).toString().padStart(2, '0');
+      return `${dan}.${mjesec}.`;
+    }
+
+    function provjeriPosteljinu() {
+      const datumUnos = document.getElementById('datumDolaska').value;
+      const rezultat = document.getElementById('rezultat');
+
+      if (!datumUnos) {
+        rezultat.innerText = 'Molim te unesi datum.';
+        return;
+      }
+
+      const danas = new Date();
+      const dolazak = new Date(datumUnos);
+
+      // Uklanjamo sate za točnost
+      danas.setHours(0, 0, 0, 0);
+      dolazak.setHours(0, 0, 0, 0);
+
+      const razlika = Math.floor((danas - dolazak) / (1000 * 60 * 60 * 24));
+
+      const dolazakFormatiran = formatirajDatum(dolazak);
+
+      if (razlika < 0) {
+        rezultat.innerText = `Datum dolaska (${dolazakFormatiran}) ne može biti u budućnosti.`;
+        return;
+      }
+
+      if (razlika % 3 === 0 && razlika !== 0) {
+        rezultat.innerText = `Gost je došao ${dolazakFormatiran} – prošlo je ${razlika} noćenja. POTREBNA JE ZAMJENA POSTELJINE.`;
+      } else {
+        rezultat.innerText = `Gost je došao ${dolazakFormatiran} – prošlo je ${razlika} noćenja. Nije još potrebna zamjena.`;
+      }
+    }
+  </script>
+</body>
+</html>
